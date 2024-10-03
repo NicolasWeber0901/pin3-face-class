@@ -10,6 +10,8 @@
     "@types/node": "^16.18.112",
     "@types/react": "^18.3.11",
     "@types/react-dom": "^18.3.0",
+    "ajv": "^7.2.4",
+    "ajv-keywords": "^5.1.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-scripts": "5.0.1",
