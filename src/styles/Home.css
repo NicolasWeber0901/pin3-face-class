@@ -4,33 +4,47 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
 }
 
 .App-header {
   background-color: #90EE90;
   width: 100%;
-  padding: 5px;
+  padding: 10px 20px;
   position: fixed;
   top: 0;
   left: 0;
-  text-align: center;
-  color: white;
-  font-size: 28px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  height: 80px;
+}
+
+.faceclass-logo {
+  height: 30px;
 }
 
 .content {
-  margin-top: 70px;
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .register-button {
   background-color: #006400;
   color: white;
-  padding: 30px 60px;
+  padding: 30px 100px;
   border: none;
-  border-radius: 5px;
-  font-size: 26px;
+  border-radius: 25px;
+  font-size: 20px;
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
