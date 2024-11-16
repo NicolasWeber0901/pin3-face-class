@@ -1,0 +1,78 @@
+/* src/components/CameraPreview.css */
+.camera-preview {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centraliza os itens horizontalmente */
+    margin-top: 20px; /* Espaço acima da pré-visualização */
+  }
+  
+.capture-button {
+  background-color: #006400;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 15px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 10px; /* Espaço acima do botão */
+}
+
+.captured-image {
+  margin-top: 20px;
+}
+
+.captured-image img {
+  max-width: 100%;
+  height: auto;
+}
+
+.loading-message {
+  font-size: 16px;
+  color: #ffa500; /* Laranja para indicar carregamento */
+  margin-top: 10px;
+}
+
+.status-message {
+  font-size: 16px;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+.status-message.success {
+  color: #28a745; /* Verde para sucesso */
+}
+
+.status-message.error {
+  color: #dc3545; /* Vermelho para erro */
+}
+
+.new-capture-button {
+  background-color: #006400;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 15px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.new-capture-button:hover {
+  background-color: #28a745;
+}
+
+.manual-insert-button:hover {
+  background-color: #28a745;
+}
+
+.manual-insert-button {
+  background-color: #006400;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 15px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 10px;
+  margin-right: 10px;
+}
