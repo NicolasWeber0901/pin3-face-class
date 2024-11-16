@@ -25,6 +25,7 @@ def upload_image():
             gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
             # Apenas retorna a dimensão da imagem processada
             height, width = gray_img.shape
+            return jsonify({"message": f"Erro ao processar imagem: {str(e)}"}), 500
             return jsonify({"message": "Presença registrada com sucesso!"}), 200
         except Exception as e:
             return jsonify({"message": f"Erro ao processar imagem: {str(e)}"}), 500

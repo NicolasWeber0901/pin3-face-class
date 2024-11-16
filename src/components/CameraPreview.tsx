@@ -1,5 +1,6 @@
-import React, { useRef, useCallback, useState } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import Webcam from 'react-webcam';
+import Modal from '../components/ModalManual'
 import '../styles/Home.css';
 import '../styles/CameraPreview.css';
 
@@ -10,31 +11,28 @@ interface CameraPreviewProps {
 
 const CameraPreview: React.FC<CameraPreviewProps> = ({ deviceId, onCapture }) => {
   const webcamRef = useRef<Webcam>(null);
-  const [loading, setLoading] = useState(false); // Indicador de carregamento
-  const [message, setMessage] = useState<string | null>(null); // Mensagem de sucesso ou erro
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false); // Controle do modal
 
   const capture = useCallback(() => {
     const image = webcamRef.current?.getScreenshot();
-    onCapture(); // Responsável por executar ações quando o botão de capturar a foto for acionado
+    onCapture();
     if (image) {
-      setLoading(true); // Inicia o carregamento
-      setMessage(null); // Reseta as mensagens anteriores
-
-      // Enviar a imagem para o backend (Python)
+      setLoading(true);
+      setMessage(null);
       fetch('http://localhost:5000/upload', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ image: image }),
       })
         .then((response) => response.json())
         .then((data) => {
-          setLoading(false); // Para o carregamento
+          setLoading(false);
           setMessage(data.message);
         })
         .catch((error) => {
-          setLoading(false); // Para o carregamento
+          setLoading(false);
           setMessage('Erro ao processar a imagem. Tente novamente.');
           console.error('Erro ao enviar imagem para o backend:', error);
         });
@@ -42,13 +40,15 @@ const CameraPreview: React.FC<CameraPreviewProps> = ({ deviceId, onCapture }) =>
   }, [webcamRef, onCapture]);
 
   const handleNewCapture = () => {
-    // Redireciona para a home
-    window.location.href = '/'; // Pode ser ajustado dependendo do roteamento utilizado no app
+    window.location.href = '/';
   };
 
   const handleManualInsert = () => {
-    // Redireciona para a página de inserção manual
-    window.location.href = '/manual'; // Ajuste conforme necessário para a rota de inserção manual
+    setIsModalOpen(true); // Abre o modal
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false); // Fecha o modal
   };
 
   return (
@@ -93,6 +93,7 @@ const CameraPreview: React.FC<CameraPreviewProps> = ({ deviceId, onCapture }) =>
           )}
         </div>
       )}
+      {isModalOpen && <Modal onClose={handleCloseModal} />}
     </div>
   );
 };
