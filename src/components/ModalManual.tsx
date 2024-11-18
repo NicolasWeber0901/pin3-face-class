@@ -1,26 +1,47 @@
 import React, { useState } from 'react';
 import InputMask from 'react-input-mask';
+import Repository from '../repository/Repository';
 import '../styles/ModalManual.css';
 
 interface ModalManualProps {
-  onClose: () => void;
+  onClose: () => void; // Fecha o modal
+  navigateToHome: () => void; // Função para redirecionar à tela inicial
 }
 
-const ModalManual: React.FC<ModalManualProps> = ({ onClose }) => {
+const ModalManual: React.FC<ModalManualProps> = ({ onClose, navigateToHome }) => {
   const [cpf, setCpf] = useState('');
   const [password, setPassword] = useState('');
-  const [date] = useState(new Date().toLocaleDateString('pt-BR')); // Data de hoje sem hora
+  const [nome, setNome] = useState(''); // Nome do aluno buscado
 
-  const handleRegister = () => {
-    // Lógica para preparar os dados
-    console.log({
-      cpf,
-      password,
-      date,
-    });
+  const handleCpfBlur = async () => {
+    // Busca o nome do aluno ao perder o foco no campo CPF
+    if (cpf) {
+      try {
+        const nomeAluno = await Repository.buscaNomeAluno(cpf);
+        setNome(nomeAluno || 'Aluno não encontrado');
+      } catch (error) {
+        console.error('Erro ao buscar nome do aluno:', error);
+        setNome('Aluno não encontrado');
+      }
+    }
+  };
 
-    // Após o registro, fecha o modal
-    onClose();
+  const handleRegister = async () => {
+    // Verifica se a senha do professor está correta
+    if (password !== '0910') {
+      alert('Senha do professor incorreta!');
+      return;
+    }
+
+    try {
+      await Repository.registraPresenca(cpf, 2, 2);
+      alert('Presença registrada com sucesso!');
+      navigateToHome(); // Redireciona à tela inicial
+    } catch (error) {
+      console.error('Erro ao registrar presença:', error);
+      alert('Erro ao registrar presença. Tente novamente.');
+      onClose(); // Fecha o modal
+    }
   };
 
   return (
@@ -39,8 +60,21 @@ const ModalManual: React.FC<ModalManualProps> = ({ onClose }) => {
               id="cpf"
               mask="999.999.999-99" // Máscara para CPF
               value={cpf}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCpf(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setCpf(e.target.value)
+              }
+              onBlur={handleCpfBlur} // Busca nome ao perder o foco
               placeholder="Digite o CPF do aluno"
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="nome">Nome do Aluno:</label>
+            <input
+              id="nome"
+              type="text"
+              value={nome}
+              readOnly // Campo somente leitura
+              placeholder="Nome do aluno"
             />
           </div>
           <div className="form-group">
@@ -49,7 +83,9 @@ const ModalManual: React.FC<ModalManualProps> = ({ onClose }) => {
               id="password"
               type="password"
               value={password}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setPassword(e.target.value)
+              }
               placeholder="Digite a senha do professor"
             />
           </div>

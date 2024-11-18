@@ -1,6 +1,7 @@
 import React, { useState, useRef, useCallback } from 'react';
 import Webcam from 'react-webcam';
-import Modal from '../components/ModalManual'
+import Repository from '../repository/Repository';  // Corrija a importação aqui
+import Modal from '../components/ModalManual';
 import '../styles/Home.css';
 import '../styles/CameraPreview.css';
 
@@ -15,40 +16,38 @@ const CameraPreview: React.FC<CameraPreviewProps> = ({ deviceId, onCapture }) =>
   const [message, setMessage] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false); // Controle do modal
 
-  const capture = useCallback(() => {
+  const capture = useCallback(async () => {
     const image = webcamRef.current?.getScreenshot();
-    onCapture();
+    onCapture(); // Executa a ação do callback
     if (image) {
-      setLoading(true);
-      setMessage(null);
-      fetch('http://localhost:5000/upload', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ image: image }),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          setLoading(false);
-          setMessage(data.message);
-        })
-        .catch((error) => {
-          setLoading(false);
-          setMessage('Erro ao processar a imagem. Tente novamente.');
-          console.error('Erro ao enviar imagem para o backend:', error);
-        });
+      setLoading(true); // Mostra carregamento
+      setMessage(null); // Reseta a mensagem
+
+      try {
+        const backendMessage = await Repository.processaImagem(image); // Usando a instância do Repository
+        setMessage(backendMessage); // Define a mensagem de sucesso
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          setMessage(error.message); // Define a mensagem de erro
+        } else {
+          setMessage('Erro desconhecido. Tente novamente.'); // Mensagem genérica em caso de erro desconhecido
+        }
+      } finally {
+        setLoading(false); // Esconde carregamento
+      }
     }
   }, [webcamRef, onCapture]);
 
-  const handleNewCapture = () => {
+  const handleTentarNovamente = () => {
     window.location.href = '/';
   };
 
   const handleManualInsert = () => {
-    setIsModalOpen(true); // Abre o modal
+    setIsModalOpen(true);
   };
 
   const handleCloseModal = () => {
-    setIsModalOpen(false); // Fecha o modal
+    setIsModalOpen(false);
   };
 
   return (
@@ -85,7 +84,7 @@ const CameraPreview: React.FC<CameraPreviewProps> = ({ deviceId, onCapture }) =>
                     INSERIR MANUALMENTE
                   </button>
                 )}
-                <button className="new-capture-button" onClick={handleNewCapture}>
+                <button className="new-capture-button" onClick={handleTentarNovamente}>
                   REALIZAR NOVA CAPTURA
                 </button>
               </div>
@@ -93,7 +92,7 @@ const CameraPreview: React.FC<CameraPreviewProps> = ({ deviceId, onCapture }) =>
           )}
         </div>
       )}
-      {isModalOpen && <Modal onClose={handleCloseModal} />}
+      {isModalOpen && <Modal onClose={handleCloseModal} navigateToHome={handleTentarNovamente} />}
     </div>
   );
 };
